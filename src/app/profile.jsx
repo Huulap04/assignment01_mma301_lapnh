@@ -1,18 +1,23 @@
 import { Link } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
 export default function ProfileScreen() {
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.container}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>L</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.avatar, { backgroundColor: theme.colors.avatarBackground }]}>
+        <Text style={[styles.avatarText, { color: theme.colors.avatarText }]}>L</Text>
       </View>
-      <Text style={styles.name}>Your Name</Text>
-      <Text style={styles.bio}>MMA301 student building a multiplatform mobile app.</Text>
+      <Text style={[styles.name, { color: theme.colors.text }]}>Your Name</Text>
+      <Text style={[styles.bio, { color: theme.colors.mutedText }]}>MMA301 student building a multiplatform mobile app.</Text>
 
       <Link href="/edit-profile" asChild>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Edit Profile</Text>
+        <Pressable style={StyleSheet.flatten([styles.button, { backgroundColor: theme.colors.primary }])}>
+          <Text style={StyleSheet.flatten([styles.buttonText, { color: theme.colors.primaryText }])}>
+            Edit Profile
+          </Text>
         </Pressable>
       </Link>
     </View>
@@ -27,11 +32,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 48,
-    backgroundColor: '#DBEAFE',
   },
-  avatarText: { fontSize: 40, fontWeight: '700', color: '#1D4ED8' },
-  name: { marginTop: 18, fontSize: 26, fontWeight: '700', color: '#0F172A' },
-  bio: { marginTop: 8, textAlign: 'center', fontSize: 16, lineHeight: 24, color: '#475569' },
-  button: { marginTop: 30, borderRadius: 10, backgroundColor: '#2563EB', paddingHorizontal: 22, paddingVertical: 14 },
-  buttonText: { color: '#FFFFFF', fontWeight: '600', fontSize: 16 },
+  avatarText: { fontSize: 40, fontWeight: '700' },
+  name: { marginTop: 18, fontSize: 26, fontWeight: '700' },
+  bio: { marginTop: 8, textAlign: 'center', fontSize: 16, lineHeight: 24 },
+  button: { marginTop: 30, borderRadius: 10, paddingHorizontal: 22, paddingVertical: 14 },
+  buttonText: { fontWeight: '600', fontSize: 16 },
 });
