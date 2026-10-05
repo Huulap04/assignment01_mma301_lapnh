@@ -1,17 +1,26 @@
 import { Link } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useProfile } from '../context/ProfileContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function ProfileScreen() {
+  const { profile } = useProfile();
   const { theme } = useTheme();
+  const initials = profile.name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.avatar, { backgroundColor: theme.colors.avatarBackground }]}>
-        <Text style={[styles.avatarText, { color: theme.colors.avatarText }]}>L</Text>
+        <Text style={[styles.avatarText, { color: theme.colors.avatarText }]}>{initials}</Text>
       </View>
-      <Text style={[styles.name, { color: theme.colors.text }]}>Your Name</Text>
-      <Text style={[styles.bio, { color: theme.colors.mutedText }]}>MMA301 student building a multiplatform mobile app.</Text>
+      <Text style={[styles.name, { color: theme.colors.text }]}>{profile.name}</Text>
+      <Text style={[styles.bio, { color: theme.colors.mutedText }]}>{profile.bio}</Text>
 
       <Link href="/edit-profile" asChild>
         <Pressable style={StyleSheet.flatten([styles.button, { backgroundColor: theme.colors.primary }])}>

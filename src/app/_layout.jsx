@@ -1,10 +1,13 @@
 import { Stack } from 'expo-router';
+import { ProfileProvider } from '../context/ProfileContext';
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <AppNavigator />
+      <ProfileProvider>
+        <AppNavigator />
+      </ProfileProvider>
     </ThemeProvider>
   );
 }

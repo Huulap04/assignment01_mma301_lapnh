@@ -1,5 +1,6 @@
 import { Link } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useProfile } from '../context/ProfileContext';
 import { useTheme } from '../context/ThemeContext';
 
 const links = [
@@ -9,13 +10,14 @@ const links = [
 ];
 
 export default function HomeScreen() {
+  const { profile } = useProfile();
   const { theme } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>Welcome!</Text>
+      <Text style={[styles.title, { color: theme.colors.text }]}>Welcome, {profile.name}!</Text>
       <Text style={[styles.description, { color: theme.colors.mutedText }]}>
-        This is the starting screen for your Profile & Activity App.
+        {profile.bio}
       </Text>
 
       <View style={styles.actions}>
