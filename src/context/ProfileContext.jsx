@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { loadProfile, saveProfile } from '../services/storage';
 
 const ProfileContext = createContext(null);
 
@@ -9,15 +10,45 @@ const defaultProfile = {
 
 export function ProfileProvider({ children }) {
   const [profile, setProfile] = useState(defaultProfile);
+  const [isHydrating, setIsHydrating] = useState(true);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function hydrateProfile() {
+      const savedProfile = await loadProfile(defaultProfile);
+
+      if (isActive) {
+        setProfile(savedProfile);
+        setIsHydrating(false);
+      }
+    }
+
+    hydrateProfile();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const updateProfile = useCallback(async (nextProfile) => {
+    const updatedProfile = { ...profile, ...nextProfile };
+    setProfile(updatedProfile);
+
+    try {
+      await saveProfile(updatedProfile);
+    } catch (error) {
+      console.warn('Could not save the profile.', error);
+    }
+  }, [profile]);
 
   const value = useMemo(
     () => ({
       profile,
-      updateProfile: (nextProfile) => {
-        setProfile((currentProfile) => ({ ...currentProfile, ...nextProfile }));
-      },
+      isHydrating,
+      updateProfile,
     }),
-    [profile]
+    [isHydrating, profile, updateProfile]
   );
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;

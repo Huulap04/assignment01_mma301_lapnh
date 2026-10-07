@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
-import { ProfileProvider } from '../context/ProfileContext';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ProfileProvider, useProfile } from '../context/ProfileContext';
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 
 export default function RootLayout() {
@@ -13,7 +14,17 @@ export default function RootLayout() {
 }
 
 function AppNavigator() {
-  const { theme } = useTheme();
+  const { isHydrating: isProfileHydrating } = useProfile();
+  const { isHydrating: isThemeHydrating, theme } = useTheme();
+
+  if (isProfileHydrating || isThemeHydrating) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
+        <ActivityIndicator color={theme.colors.primary} size="large" />
+        <Text style={[styles.loadingText, { color: theme.colors.mutedText }]}>Loading your app...</Text>
+      </View>
+    );
+  }
 
   return (
     <Stack
@@ -31,3 +42,8 @@ function AppNavigator() {
     </Stack>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  loadingText: { marginTop: 14, fontSize: 16 },
+});

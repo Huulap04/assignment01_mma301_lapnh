@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { loadTheme, saveTheme } from '../services/storage';
 
 const ThemeContext = createContext(null);
 
@@ -35,16 +36,46 @@ const themes = {
 
 export function ThemeProvider({ children }) {
   const [themeName, setThemeName] = useState('light');
+  const [isHydrating, setIsHydrating] = useState(true);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function hydrateTheme() {
+      const savedTheme = await loadTheme('light');
+
+      if (isActive) {
+        setThemeName(savedTheme);
+        setIsHydrating(false);
+      }
+    }
+
+    hydrateTheme();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const toggleTheme = useCallback(async () => {
+    const nextThemeName = themeName === 'light' ? 'dark' : 'light';
+    setThemeName(nextThemeName);
+
+    try {
+      await saveTheme(nextThemeName);
+    } catch (error) {
+      console.warn('Could not save the theme preference.', error);
+    }
+  }, [themeName]);
 
   const value = useMemo(
     () => ({
       theme: themes[themeName],
       themeName,
-      toggleTheme: () => {
-        setThemeName((currentTheme) => (currentTheme === 'light' ? 'dark' : 'light'));
-      },
+      isHydrating,
+      toggleTheme,
     }),
-    [themeName]
+    [isHydrating, themeName, toggleTheme]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
