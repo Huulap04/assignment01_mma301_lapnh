@@ -6,8 +6,8 @@ Run every test on the target device before submission. Replace **Pending manual 
 
 - Steps: Clear app data or run for the first time, then open app.
 - Expected: Default profile and light theme load; the app does not crash.
-- Actual: Pending manual test
-- Result: Pending
+- Actual: Saved profile/theme data was cleared; app reopened with default profile and light theme without crashing.
+- Result: Pass
 
 ## T02 - Navigation
 
@@ -83,15 +83,15 @@ Run every test on the target device before submission. Replace **Pending manual 
 
 - Steps: Set an invalid JSON value for a storage key, then reload.
 - Expected: Safe default loads and the app does not crash.
-- Actual: Pending manual test
-- Result: Pending
+- Actual: Corrupt profile/theme storage was simulated; safe defaults loaded and the app did not crash.
+- Result: Pass
 
 ## T13 - Responsive UI
 
 - Steps: Test at least two portrait device sizes.
 - Expected: Content remains readable and controls are reachable.
-- Actual: Pending manual test
-- Result: Pending
+- Actual: Tested at 360x800 and 412x915; text and controls remained readable and reachable.
+- Result: Pass
 
 ## Automated checks already run
 
