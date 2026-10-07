@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PROFILE_KEY = '@mma301/profile';
 const THEME_KEY = '@mma301/theme';
+const READ_TIMEOUT_MS = 2000;
 
 function isValidProfile(value) {
   return (
@@ -12,8 +13,26 @@ function isValidProfile(value) {
   );
 }
 
+function readWithTimeout(key) {
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject(new Error(`AsyncStorage read timed out for ${key}.`));
+    }, READ_TIMEOUT_MS);
+
+    AsyncStorage.getItem(key)
+      .then((value) => {
+        clearTimeout(timeoutId);
+        resolve(value);
+      })
+      .catch((error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      });
+  });
+}
+
 async function readJson(key) {
-  const storedValue = await AsyncStorage.getItem(key);
+  const storedValue = await readWithTimeout(key);
 
   if (storedValue === null) {
     return null;
